@@ -29,7 +29,7 @@ app.use(function *(){
     json: true,
     headers: {
       AccountKey: nconf.get('accountKey'),
-    	UniqueUserId: nconf.get('uniqueUserID')
+      UniqueUserId: nconf.get('uniqueUserID')
     }
   });
 
@@ -45,7 +45,7 @@ app.use(function *(){
     var nextArrival = service.NextBus.EstimatedArrival;
     var subsequentArrival = service.SubsequentBus.EstimatedArrival;
     var now = Date.now();
-    
+
     return {
       no: service.ServiceNo,
       next: {
