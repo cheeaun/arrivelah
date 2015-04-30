@@ -55,4 +55,4 @@ app.use(function *(){
   }
 });
 
-app.listen(nconf.get('port'));
+app.listen(nconf.get('PORT') || nconf.get('port'));
