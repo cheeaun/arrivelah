@@ -16,7 +16,7 @@ API
 
 ### Response
 
-```
+```json
 {
   "services": [
     {
