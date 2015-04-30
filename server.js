@@ -11,7 +11,6 @@ app.use(gzip());
 app.use(cors());
 
 app.use(function *(){
-  var self = this;
   var query = this.request.query;
   var id = query.id;
 
