@@ -4,7 +4,9 @@ var cors = require('koa-cors');
 var gzip = require('koa-gzip');
 var request = require('co-request');
 
-nconf.env().file({ file: 'config.json' }).defaults({ port: 80 });
+nconf.env()
+  .file({ file: 'config.json' })
+  .defaults({ port: 80 });
 
 var app = koa();
 app.use(gzip());
