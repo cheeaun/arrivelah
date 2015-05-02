@@ -1,18 +1,31 @@
 var nconf = require('nconf');
 var koa = require('koa');
 var cors = require('koa-cors');
-var gzip = require('koa-gzip');
 var request = require('co-request');
+var cash = require('koa-cash');
+var cache = require('lru-cache')({
+  maxAge: 1000 * 15 // 15 seconds
+});
 
 nconf.env()
   .file({ file: 'config.json' })
   .defaults({ port: 80 });
 
 var app = koa();
-app.use(gzip());
 app.use(cors());
+app.use(cash({
+  threshold: 100, // 100 bytes
+  get: function* (key){
+    return cache.get(key)
+  },
+  set: function* (key, value){
+    cache.set(key, value)
+  }
+}));
 
 app.use(function *(){
+  if (yield* this.cashed()) return;
+
   var query = this.request.query;
   var id = query.id;
 

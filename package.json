@@ -15,9 +15,10 @@
   "dependencies": {
     "co-request": "~0.2.1",
     "koa": "~0.19.1",
+    "koa-cash": "~1.0.1",
     "koa-cors": "~0.0.14",
-    "koa-gzip": "^0.1.0",
     "koa-json": "~1.1.1",
+    "lru-cache": "~2.6.2",
     "nconf": "~0.7.1"
   }
 }
