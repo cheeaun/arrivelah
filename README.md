@@ -45,6 +45,8 @@ API
 }
 ```
 
+The responses are cached for **15 seconds**.
+
 Development
 ---
 
