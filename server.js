@@ -31,7 +31,7 @@ app.use(function *(){
 
   if (!id){
     this.body = {
-      error: 'Bus stop ID is not provided.'
+      error: 'Bus stop ID is not provided. "id" URL parameter required.'
     };
 
     return;
