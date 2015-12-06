@@ -13,12 +13,15 @@
     "iojs": ">=1.0.x"
   },
   "dependencies": {
-    "co-request": "~0.2.1",
-    "koa": "~0.19.1",
-    "koa-cash": "~1.0.1",
+    "co-request": "~1.0.0",
+    "koa": "~1.1.2",
+    "koa-cash": "~1.1.0",
     "koa-cors": "~0.0.14",
     "koa-json": "~1.1.1",
-    "lru-cache": "~2.6.2",
-    "nconf": "~0.7.1"
+    "lru-cache": "~3.2.0",
+    "nconf": "~0.8.2"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }

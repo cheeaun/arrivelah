@@ -54,7 +54,7 @@ Development
   1. Copy and rename `config.example.json` to `config.json`. Edit the file.
   2. Add environment variables.
 2. `npm install`
-3. `iojs server.js`
+3. `npm start`
 4. Load `locahost`. Change `port` in configuration if `80` doesn't work.
 
 License
