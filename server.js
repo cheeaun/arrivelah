@@ -23,8 +23,8 @@ app.use(cash({
   }
 }));
 
-app.use(function *(){
-  if (yield* this.cashed()) return;
+app.use(function* (){
+  if (yield this.cashed()) return;
 
   var query = this.request.query;
   var id = query.id;
@@ -42,7 +42,6 @@ app.use(function *(){
     json: true,
     headers: {
       AccountKey: nconf.get('accountKey'),
-      UniqueUserId: nconf.get('uniqueUserID')
     }
   });
 
@@ -63,7 +62,7 @@ app.use(function *(){
       no: service.ServiceNo,
       next: {
         time: nextArrival,
-        duration_ms: nextArrival ? (new Date(nextArrival) - now) : null
+        duration_ms: nextArrival ? (new Date(nextArrival) - now) : null,
       },
       subsequent: {
         time: subsequentArrival,
