@@ -9,14 +9,8 @@
   ],
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "iojs": ">=1.0.x"
-  },
   "dependencies": {
     "co-request": "~1.0.0",
-  },
-  "scripts": {
-    "start": "node server.js"
     "koa": "~1.2.4",
     "koa-cash": "~2.1.0",
     "koa-cors": "~0.0.16",
