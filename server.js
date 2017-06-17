@@ -1,62 +1,61 @@
-var nconf = require('nconf');
-var koa = require('koa');
-var cors = require('koa-cors');
-var request = require('co-request');
-var cash = require('koa-cash');
-var cache = require('lru-cache')({
+require('dotenv').config();
+
+const Koa = require('koa');
+const convert = require('koa-convert');
+const cors = require('koa-cors');
+const cash = require('koa-cash');
+const got = require('got');
+const cache = require('lru-cache')({
   maxAge: 1000 * 15 // 15 seconds
 });
 
-nconf.env()
-  .file({ file: 'config.json' })
-  .defaults({ port: 80 });
-
-var app = koa();
-app.use(cors());
-app.use(cash({
+const app = new Koa();
+app.use(convert(cors()));
+app.use(convert(cash({
   threshold: 100, // 100 bytes
-  get: function* (key){
+  get(key){
     return cache.get(key)
   },
-  set: function* (key, value){
+  set(key, value){
     cache.set(key, value)
   }
-}));
+})));
 
-app.use(function* (){
-  if (yield this.cashed()) return;
+app.use(async (ctx) => {
+  if (await ctx.cashed()) return;
 
-  var query = this.request.query;
-  var id = query.id;
+  const query = ctx.request.query;
+  const id = query.id;
 
   if (!id){
-    this.body = {
-      error: 'Bus stop ID is not provided. "id" URL parameter required.'
+    ctx.body = {
+      error: 'Bus stop ID is not provided. \'id\' URL parameter required. E.g.: `/?id=83139`'
     };
 
     return;
   }
 
-  var result = yield request({
-    uri: 'http://datamall2.mytransport.sg/ltaodataservice/BusArrival?BusStopID=' + id,
+  const result = await got('http://datamall2.mytransport.sg/ltaodataservice/BusArrival?BusStopID=' + id, {
     json: true,
     headers: {
-      AccountKey: nconf.get('accountKey'),
+      AccountKey: process.env.accountKey,
     }
   });
 
+  console.log('r', result);
+
   if (result.statusCode !== 200 || !result.body){
-    this.body = {
+    ctx.body = {
       error: 'Invalid bus stop ID provided.'
     };
 
     return;
   }
 
-  var services = result.body.Services.map(function(service){
-    var nextArrival = service.NextBus.EstimatedArrival;
-    var subsequentArrival = service.SubsequentBus.EstimatedArrival;
-    var now = Date.now();
+  const services = result.body.Services.map((service) => {
+    const nextArrival = service.NextBus.EstimatedArrival;
+    const subsequentArrival = service.SubsequentBus.EstimatedArrival;
+    const now = Date.now();
 
     return {
       no: service.ServiceNo,
@@ -71,9 +70,11 @@ app.use(function* (){
     }
   });
 
-  this.body = {
-    services: services
+  ctx.body = {
+    services,
   };
 });
 
-app.listen(nconf.get('PORT') || nconf.get('port'));
+const port = process.env.PORT || 8081;
+app.listen(port);
+console.log('Server started at localhost:' + port);
