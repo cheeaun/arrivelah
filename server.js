@@ -42,8 +42,6 @@ app.use(async (ctx) => {
     }
   });
 
-  console.log('r', result);
-
   if (result.statusCode !== 200 || !result.body){
     ctx.body = {
       error: 'Invalid bus stop ID provided.'
