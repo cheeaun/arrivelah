@@ -51,8 +51,9 @@ app.use(async (ctx) => {
   }
 
   const services = result.body.Services.map((service) => {
-    const nextArrival = service.NextBus.EstimatedArrival;
-    const subsequentArrival = service.SubsequentBus.EstimatedArrival;
+    const { NextBus, SubsequentBus } = service;
+    const nextArrival = NextBus.EstimatedArrival;
+    const subsequentArrival = SubsequentBus.EstimatedArrival;
     const now = Date.now();
 
     return {
@@ -60,10 +61,18 @@ app.use(async (ctx) => {
       next: {
         time: nextArrival,
         duration_ms: nextArrival ? (new Date(nextArrival) - now) : null,
+        lat: parseFloat(NextBus.Latitude, 10),
+        lng: parseFloat(NextBus.Longitude, 10),
+        load: NextBus.Load,
+        feature: NextBus.Feature,
       },
       subsequent: {
         time: subsequentArrival,
-        duration_ms: subsequentArrival ? (new Date(subsequentArrival) - now) : null
+        duration_ms: subsequentArrival ? (new Date(subsequentArrival) - now) : null,
+        lat: parseFloat(SubsequentBus.Latitude, 10),
+        lng: parseFloat(SubsequentBus.Longitude, 10),
+        load: SubsequentBus.Load,
+        feature: SubsequentBus.Feature,
       }
     }
   });
