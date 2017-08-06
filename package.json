@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Bus arrival times in Singapore",
   "engines": {
-    "node": "stable"
+    "node": ">=8.x"
   },
   "keywords": [
     "bus",
