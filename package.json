@@ -15,11 +15,8 @@
   "dependencies": {
     "dotenv": "~4.0.0",
     "got": "~7.1.0",
+    "kcors": "~2.2.1",
     "koa": "~2.3.0",
-    "koa-cash": "~2.1.1",
-    "koa-convert": "^1.2.0",
-    "koa-cors": "~0.0.16",
-    "koa-json": "~2.0.2",
     "lru-cache": "~4.1.1"
   }
 }
