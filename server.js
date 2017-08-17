@@ -28,6 +28,7 @@ app.use(async (ctx) => {
     console.log('Fetch ' + url);
     const result = await got(url, {
       json: true,
+      timeout: 1000 * 10, // 10 seconds
       headers: {
         AccountKey: process.env.accountKey,
       },
