@@ -15,7 +15,10 @@ app.use(async (ctx) => {
 
   if (!id){
     ctx.body = {
-      error: 'Bus stop ID is not provided. \'id\' URL parameter required. E.g.: `/?id=83139`'
+      name: 'arrivelah',
+      project_url: 'https://github.com/cheeaun/arrivelah',
+      instruction: 'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/cheeaun/busrouter-sg/blob/master/data/2/bus-stops.geojson',
+      current_bus_arrival_queries: cache.keys(),
     };
     return;
   }
