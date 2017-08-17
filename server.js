@@ -6,6 +6,7 @@ const got = require('got');
 const cache = require('lru-cache')({
   maxAge: 1000 * 15 // 15 seconds
 });
+setInterval(() => cache.prune(), 1000 * 60); // Prune every minute
 
 const app = new Koa();
 app.use(cors());
