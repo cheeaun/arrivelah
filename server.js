@@ -31,25 +31,25 @@ app.use(async (ctx) => {
   if (!services){
     const url = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrival?BusStopID=' + id;
     console.log('Fetch ' + url);
-    await retry(async () => {
-      const result = await fetch(url, {
+    await retry(async (bail) => {
+      const res = await fetch(url, {
         timeout: 1000 * 10, // 10 seconds
         headers: {
           AccountKey: process.env.accountKey,
         },
-      }).then(async (res) => ({
-        statusCode: res.status,
-        body: await res.json(),
-      }));
+      });
+      const { status } = res;
+      const body = await res.json();
 
-      if (result.statusCode !== 200 || !result.body){
+      if (status !== 200 || !body){
+        bail();
         ctx.body = {
           error: 'Invalid bus stop ID provided.'
         };
         return;
       }
 
-      services = result.body.Services.map((service) => {
+      services = body.Services.map((service) => {
         const { NextBus, SubsequentBus } = service;
         const nextArrival = NextBus.EstimatedArrival;
         const subsequentArrival = SubsequentBus.EstimatedArrival;
