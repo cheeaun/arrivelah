@@ -29,7 +29,7 @@ app.use(async (ctx) => {
   console.log('🚌  ' + id);
 
   if (!services){
-    const url = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrival?BusStopID=' + id;
+    const url = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=' + id;
     console.log('Fetch ' + url);
     await retry(async (bail) => {
       const res = await fetch(url, {
@@ -49,30 +49,30 @@ app.use(async (ctx) => {
         return;
       }
 
+      const now = Date.now();
+      const arrivalResponse = (bus) => {
+        const arrival = bus.EstimatedArrival;
+        return {
+          time: arrival,
+          duration_ms: arrival ? (new Date(arrival) - now) : null,
+          lat: parseFloat(bus.Latitude, 10),
+          lng: parseFloat(bus.Longitude, 10),
+          load: bus.Load,
+          feature: bus.Feature,
+          type: bus.Type,
+        };
+      };
+
       services = body.Services.map((service) => {
-        const { NextBus, SubsequentBus } = service;
-        const nextArrival = NextBus.EstimatedArrival;
-        const subsequentArrival = SubsequentBus.EstimatedArrival;
-        const now = Date.now();
+        const { NextBus, NextBus2, NextBus3 } = service;
 
         return {
           no: service.ServiceNo,
-          next: {
-            time: nextArrival,
-            duration_ms: nextArrival ? (new Date(nextArrival) - now) : null,
-            lat: parseFloat(NextBus.Latitude, 10),
-            lng: parseFloat(NextBus.Longitude, 10),
-            load: NextBus.Load,
-            feature: NextBus.Feature,
-          },
-          subsequent: {
-            time: subsequentArrival,
-            duration_ms: subsequentArrival ? (new Date(subsequentArrival) - now) : null,
-            lat: parseFloat(SubsequentBus.Latitude, 10),
-            lng: parseFloat(SubsequentBus.Longitude, 10),
-            load: SubsequentBus.Load,
-            feature: SubsequentBus.Feature,
-          }
+          operator: service.Operator,
+          next: arrivalResponse(NextBus),
+          subsequent: arrivalResponse(NextBus2), // Legacy pre
+          next2: arrivalResponse(NextBus2),
+          next3: arrivalResponse(NextBus3),
         }
       });
 
