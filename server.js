@@ -2,8 +2,7 @@ require('dotenv').config();
 
 const Koa = require('koa');
 const cors = require('kcors');
-const retry = require('async-retry')
-const fetch = require('node-fetch');
+const got = require('got');
 const cache = require('lru-cache')({
   maxAge: 1000 * 15 // 15 seconds
 });
@@ -30,58 +29,54 @@ app.use(async (ctx) => {
 
   if (!services){
     const url = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=' + id;
-    console.log('Fetch ' + url);
-    await retry(async (bail) => {
-      const res = await fetch(url, {
-        timeout: 1000 * 10, // 10 seconds
-        headers: {
-          AccountKey: process.env.accountKey,
-        },
-      });
-      const { status } = res;
-      const body = await res.json();
-
-      if (status !== 200 || !body){
-        bail();
-        ctx.body = {
-          error: 'Invalid bus stop ID provided.'
-        };
-        return;
-      }
-
-      const now = Date.now();
-      const arrivalResponse = (bus) => {
-        const arrival = bus.EstimatedArrival;
-        return {
-          time: arrival,
-          duration_ms: arrival ? (new Date(arrival) - now) : null,
-          lat: parseFloat(bus.Latitude, 10),
-          lng: parseFloat(bus.Longitude, 10),
-          load: bus.Load,
-          feature: bus.Feature,
-          type: bus.Type,
-        };
-      };
-
-      services = body.Services.map((service) => {
-        const { NextBus, NextBus2, NextBus3 } = service;
-
-        return {
-          no: service.ServiceNo,
-          operator: service.Operator,
-          next: arrivalResponse(NextBus),
-          subsequent: arrivalResponse(NextBus2), // Legacy pre
-          next2: arrivalResponse(NextBus2),
-          next3: arrivalResponse(NextBus3),
-        }
-      });
-
-      cache.set(id, services);
-    }, {
-      retries: 3,
+    console.log(`↗️  ${url}`);
+    const { body, statusCode } = await got(url, {
+      json: true,
+      timeout: 1000 * 10, // 10 seconds
+      retry: 3,
+      headers: {
+        AccountKey: process.env.accountKey,
+      },
     });
+
+    if (statusCode !== 200 || !body){
+      ctx.body = {
+        error: 'Invalid bus stop ID provided.'
+      };
+      return;
+    }
+
+    const now = Date.now();
+    const arrivalResponse = (bus) => {
+      const arrival = bus.EstimatedArrival;
+      return {
+        time: arrival,
+        duration_ms: arrival ? (new Date(arrival) - now) : null,
+        lat: parseFloat(bus.Latitude, 10),
+        lng: parseFloat(bus.Longitude, 10),
+        load: bus.Load,
+        feature: bus.Feature,
+        type: bus.Type,
+      };
+    };
+
+    services = body.Services.map((service) => {
+      const { NextBus, NextBus2, NextBus3 } = service;
+
+      return {
+        no: service.ServiceNo,
+        operator: service.Operator,
+        next: arrivalResponse(NextBus),
+        subsequent: arrivalResponse(NextBus2), // Legacy pre
+        next2: arrivalResponse(NextBus2),
+        next3: arrivalResponse(NextBus3),
+      }
+    });
+
+    cache.set(id, services);
   }
 
+  ctx.set('cache-control', 'max-age=10');
   ctx.body = {
     services,
   };
