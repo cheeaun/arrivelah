@@ -10,7 +10,9 @@ API
 
 ### Request
 
-<https://arrivelah.herokuapp.com/?id=83139>
+```
+GET /?id=83139
+```
 
 - `id` - (required) Bus stop ID/code
 
