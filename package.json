@@ -13,11 +13,11 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "~6.0.0",
-    "got": "~9.2.2",
+    "dotenv": "~6.2.0",
+    "got": "~9.6.0",
     "kcors": "~2.2.2",
-    "koa": "~2.5.3",
-    "lru-cache": "~4.1.3"
+    "koa": "~2.6.2",
+    "lru-cache": "~5.1.1"
   },
   "scripts": {
     "deploy": "gcloud app deploy --project=arrivelah"

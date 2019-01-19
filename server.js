@@ -3,7 +3,8 @@ require('dotenv').config();
 const Koa = require('koa');
 const cors = require('kcors');
 const got = require('got');
-const cache = require('lru-cache')({
+const LRU = require('lru-cache');
+const cache = new LRU({
   maxAge: 1000 * 15 // 15 seconds
 });
 setInterval(() => cache.prune(), 1000 * 60); // Prune every minute
