@@ -19,7 +19,7 @@ app.use(async (ctx) => {
     ctx.body = {
       name: 'arrivelah',
       project_url: 'https://github.com/cheeaun/arrivelah',
-      instruction: 'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/cheeaun/busrouter-sg/blob/master/data/2/bus-stops.geojson',
+      instruction: 'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/honcheng/Singapore-Bus-Services/blob/master/busstops.csv',
       current_bus_arrival_queries: cache.keys(),
     };
     return;
