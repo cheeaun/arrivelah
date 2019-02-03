@@ -1,1 +1,3 @@
-runtime: nodejs8
+runtime: nodejs10
+automatic_scaling:
+  min_instances: 0
