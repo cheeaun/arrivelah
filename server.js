@@ -1,88 +1,118 @@
 require('dotenv').config();
 
-const Koa = require('koa');
-const cors = require('kcors');
+if (!process.env.accountKeys) {
+  throw new Error('Please provide account key(s) (space-separated)');
+}
+
+const crypto = require('crypto');
+const url = require('url');
 const got = require('got');
-const LRU = require('lru-cache');
-const cache = new LRU({
-  maxAge: 1000 * 15 // 15 seconds
-});
-setInterval(() => cache.prune(), 1000 * 60); // Prune every minute
+const HttpAgent = require('agentkeepalive');
+const { HttpsAgent } = HttpAgent;
+const httpAgent = new HttpAgent();
+const httpsAgent = new HttpsAgent();
 
-const app = new Koa();
-app.use(cors());
+const isDev = !process.env.NOW_REGION;
 
-app.use(async (ctx) => {
-  const { id } = ctx.request.query;
+const accountKeys = process.env.accountKeys.split(/\s+/);
+const getAccountKey = () => {
+  // let accountKeyIndex = Math.floor(Math.random() * accountKeys.length);
+  // https://stackoverflow.com/a/33627342/20838
+  const accountKeyIndex = Math.floor(parseInt(crypto.randomBytes(1).toString('hex'), 16)/256*(accountKeys.length));
+  return accountKeys[accountKeyIndex];
+}
 
-  if (!id){
-    ctx.body = {
-      name: 'arrivelah',
-      project_url: 'https://github.com/cheeaun/arrivelah',
-      instruction: 'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/honcheng/Singapore-Bus-Services/blob/master/busstops.csv',
-      current_bus_arrival_queries: cache.keys(),
-    };
+async function handler(req, res) {
+  const URL = url.parse(req.url, true);
+  // console.log(req);
+
+  res.setHeader('vary', 'origin');
+  res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-credentials', 'true');
+
+  if (req.method.toLowerCase() === 'options' && req.headers['access-control-request-headers']) {
+    // Preflight
+    res.status = 204;
+    res.end();
     return;
   }
 
-  let services = cache.get(id);
-  console.log('🚌  ' + id);
+  res.setHeader('content-type', 'application/json');
 
-  if (!services){
-    const url = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=' + id;
-    console.log(`↗️  ${url}`);
-    const { body, statusCode } = await got(url, {
-      json: true,
-      timeout: 1000 * 10, // 10 seconds
-      retry: 3,
-      headers: {
-        AccountKey: process.env.accountKey,
-      },
-    });
-
-    if (statusCode !== 200 || !body){
-      ctx.body = {
-        error: 'Invalid bus stop ID provided.'
-      };
-      return;
-    }
-
-    const now = Date.now();
-    const arrivalResponse = (bus) => {
-      const arrival = bus.EstimatedArrival;
-      return {
-        time: arrival,
-        duration_ms: arrival ? (new Date(arrival) - now) : null,
-        lat: parseFloat(bus.Latitude, 10),
-        lng: parseFloat(bus.Longitude, 10),
-        load: bus.Load,
-        feature: bus.Feature,
-        type: bus.Type,
-      };
-    };
-
-    services = body.Services.map((service) => {
-      const { NextBus, NextBus2, NextBus3 } = service;
-
-      return {
-        no: service.ServiceNo,
-        operator: service.Operator,
-        next: arrivalResponse(NextBus),
-        subsequent: arrivalResponse(NextBus2), // Legacy pre
-        next2: arrivalResponse(NextBus2),
-        next3: arrivalResponse(NextBus3),
-      }
-    });
-
-    cache.set(id, services);
+  const { id } = URL.query;
+  if (!id){
+    res.end(JSON.stringify({
+      name: 'arrivelah',
+      project_url: 'https://github.com/cheeaun/arrivelah',
+      instruction: 'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/honcheng/Singapore-Bus-Services/blob/master/busstops.csv',
+    }));
+    return;
   }
 
-  ctx.set('cache-control', 'max-age=10');
-  ctx.body = {
-    services,
-  };
-});
+  console.log('🚌  ' + id);
 
-const port = process.env.PORT || 8081;
-app.listen(port);
-console.log('Server started at port ' + port);
+  const dnsCache = new Map();
+  const apiURL = 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=' + id;
+  const AccountKey = getAccountKey();
+  console.log(`[${AccountKey.slice(0, 4)}] ↗️  ${apiURL}`);
+  const { body, statusCode } = await got(apiURL, {
+    json: true,
+    timeout: 1000 * 10, // 10 seconds
+    retry: 3,
+    dnsCache,
+    headers: {
+      AccountKey,
+      Connection: 'keep-alive',
+    },
+    agent: {
+      http: httpAgent,
+      https: httpsAgent,
+    },
+  });
+
+  if (statusCode !== 200 || !body){
+    res.end(JSON.stringify({
+      error: 'Invalid bus stop ID provided.'
+    }))
+    return;
+  }
+
+  const now = Date.now();
+  const arrivalResponse = (bus) => {
+    const arrival = bus.EstimatedArrival;
+    return {
+      time: arrival,
+      duration_ms: arrival ? (new Date(arrival) - now) : null,
+      lat: parseFloat(bus.Latitude, 10),
+      lng: parseFloat(bus.Longitude, 10),
+      load: bus.Load,
+      feature: bus.Feature,
+      type: bus.Type,
+    };
+  };
+
+  const services = body.Services.map((service) => {
+    const { NextBus, NextBus2, NextBus3 } = service;
+
+    return {
+      no: service.ServiceNo,
+      operator: service.Operator,
+      next: arrivalResponse(NextBus),
+      subsequent: arrivalResponse(NextBus2), // Legacy pre
+      next2: arrivalResponse(NextBus2),
+      next3: arrivalResponse(NextBus3),
+    }
+  });
+
+  res.setHeader('cache-control', 's-maxage=15, max-age=15');
+  res.end(JSON.stringify({ services }));
+};
+
+exports.default = handler;
+
+if (isDev) {
+  const PORT = process.env.PORT || 8081;
+  const listen = () => console.log(`Listening on ${PORT}...`);
+  require('http').createServer(handler).listen(PORT, listen);
+  console.log('Server started at port ' + PORT);
+}

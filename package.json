@@ -1,6 +1,6 @@
 {
   "name": "arrivelah",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Bus arrival times in Singapore",
   "engines": {
     "node": ">=8"
@@ -13,13 +13,8 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "~6.2.0",
-    "got": "~9.6.0",
-    "kcors": "~2.2.2",
-    "koa": "~2.7.0",
-    "lru-cache": "~5.1.1"
-  },
-  "scripts": {
-    "deploy": "gcloud app deploy --project=arrivelah"
+    "agentkeepalive": "^4.0.2",
+    "dotenv": "~8.1.0",
+    "got": "~9.6.0"
   }
 }
