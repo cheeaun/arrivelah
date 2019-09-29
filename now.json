@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "alias": [
+    "arrivelah.now.sh",
+    "arrivelah2.busrouter.sg"
+  ],
+  "builds": [
+    { "src": "server.js", "use": "@now/node" },
+    { "src": "service.js", "use": "@now/node" }
+  ],
+  "routes": [
+    { "src": "/favicon.ico", "status": 204 },
+    { "src": "/service/(.*)", "dest": "/service.js" },
+    { "src": "/(.*)", "dest": "/server.js" }
+  ],
+  "regions": ["sin"],
+  "env": {
+    "accountKeys": "@lta-keys",
+    "myTransportAccountKey": "@mytransport-key"
+  }
+}
