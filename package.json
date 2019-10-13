@@ -13,7 +13,7 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "agentkeepalive": "^4.0.2",
+    "agentkeepalive": "^4.1.0",
     "dotenv": "~8.1.0",
     "got": "~9.6.0"
   }
