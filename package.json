@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "agentkeepalive": "^4.1.0",
-    "dotenv": "~8.1.0",
+    "dotenv": "~8.2.0",
     "got": "~9.6.0"
   }
 }
