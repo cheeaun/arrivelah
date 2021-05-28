@@ -54,7 +54,7 @@ async function handler(req, res) {
         name: 'arrivelah',
         project_url: 'https://github.com/cheeaun/arrivelah',
         instruction:
-          'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of the codes here: https://github.com/honcheng/Singapore-Bus-Services/blob/master/busstops.csv',
+          'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of bus stops: https://observablehq.com/@cheeaun/list-of-bus-stops-in-singapore',
       }),
     );
     return;
