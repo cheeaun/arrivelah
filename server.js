@@ -28,6 +28,7 @@ async function handler(req, res) {
 
   res.setHeader('vary', 'origin');
   res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-headers', '*');
   res.setHeader('access-control-allow-credentials', 'true');
 
   if (req.method.toLowerCase() === 'options' && req.headers['access-control-request-headers']) {
