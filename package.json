@@ -1,9 +1,9 @@
 {
   "name": "arrivelah",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Bus arrival times in Singapore",
   "engines": {
-    "node": ">=8"
+    "node": ">=14"
   },
   "keywords": [
     "bus",
@@ -13,8 +13,9 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "agentkeepalive": "^4.1.0",
-    "dotenv": "~8.2.0",
-    "got": "~9.6.0"
+    "agentkeepalive": "~4.1.4",
+    "dotenv": "~10.0.0",
+    "got": "~11.8.2",
+    "http2-wrapper": "~2.0.5"
   }
 }
