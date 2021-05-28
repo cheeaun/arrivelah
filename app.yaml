@@ -1,4 +1,0 @@
-runtime: nodejs10
-automatic_scaling:
-  min_instances: 0
-  min_idle_instances: 0
