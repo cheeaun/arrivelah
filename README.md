@@ -22,57 +22,252 @@ GET /?id=83139
 {
   "services": [
     {
-      "no": "15",
+      "no": "136",
+      "operator": "GAS",
       "next": {
-        "time": "2017-07-18T01:30:37+00:00",
-        "duration_ms": -34445,
-        "lat": 1.3148358333333334,
-        "lng": 103.90915083333333,
-        "load": "Standing Available",
-        "feature": "WAB"
+        "time": "2022-06-18T21:19:43+08:00",
+        "duration_ms": 395837,
+        "lat": 1.3527008333333335,
+        "lng": 103.8770235,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "65009",
+        "destination_code": "54009"
       },
       "subsequent": {
-        "time": "2017-07-18T01:36:11+00:00",
-        "duration_ms": 299555,
-        "lat": 1.3265658333333334,
-        "lng": 103.9059575,
-        "feature": "WAB"
+        "time": "2022-06-18T21:33:22+08:00",
+        "duration_ms": 1214837,
+        "lat": 1.3723343333333333,
+        "lng": 103.898075,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "65009",
+        "destination_code": "54009"
+      },
+      "next2": {
+        "time": "2022-06-18T21:33:22+08:00",
+        "duration_ms": 1214837,
+        "lat": 1.3723343333333333,
+        "lng": 103.898075,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "65009",
+        "destination_code": "54009"
+      },
+      "next3": {
+        "time": "2022-06-18T21:51:23+08:00",
+        "duration_ms": 2295837,
+        "lat": 1.3994908333333334,
+        "lng": 103.90791783333333,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "65009",
+        "destination_code": "54009"
       }
     },
     {
-      "no": "150",
+      "no": "136",
+      "operator": "GAS",
       "next": {
-        "time": "2017-07-18T01:32:44+00:00",
-        "duration_ms": 92555,
-        "lat": 1.3196148333333333,
-        "lng": 103.9014965,
-        "load": "Seats Available",
-        "feature": "WAB"
-      },
-      "subsequent": {
-        "time": "2017-07-18T01:51:16+00:00",
-        "duration_ms": 1204555,
+        "time": "2022-06-18T21:30:41+08:00",
+        "duration_ms": 1053837,
         "lat": 0,
         "lng": 0,
-        "feature": "WAB"
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "54009",
+        "destination_code": "65009"
+      },
+      "subsequent": {
+        "time": "2022-06-18T21:49:41+08:00",
+        "duration_ms": 2193837,
+        "lat": 0,
+        "lng": 0,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "54009",
+        "destination_code": "65009"
+      },
+      "next2": {
+        "time": "2022-06-18T21:49:41+08:00",
+        "duration_ms": 2193837,
+        "lat": 0,
+        "lng": 0,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "54009",
+        "destination_code": "65009"
+      },
+      "next3": null
+    },
+    {
+      "no": "315",
+      "operator": "SBST",
+      "next": {
+        "time": "2022-06-18T21:13:30+08:00",
+        "duration_ms": 22837,
+        "lat": 1.3632465,
+        "lng": 103.871274,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      },
+      "subsequent": {
+        "time": "2022-06-18T21:22:15+08:00",
+        "duration_ms": 547837,
+        "lat": 0,
+        "lng": 0,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      },
+      "next2": {
+        "time": "2022-06-18T21:22:15+08:00",
+        "duration_ms": 547837,
+        "lat": 0,
+        "lng": 0,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      },
+      "next3": {
+        "time": "2022-06-18T21:23:32+08:00",
+        "duration_ms": 624837,
+        "lat": 1.3752478333333333,
+        "lng": 103.869852,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "66009",
+        "destination_code": "66009"
       }
     },
     {
-      "no": "155",
+      "no": "317",
+      "operator": "SBST",
       "next": {
-        "time": "2017-07-18T01:32:36+00:00",
-        "duration_ms": 84555,
-        "lat": 1.319155,
-        "lng": 103.90471016666666,
-        "load": "Seats Available",
-        "feature": "WAB"
+        "time": "2022-06-18T21:20:49+08:00",
+        "duration_ms": 461837,
+        "lat": 1.3628948333333333,
+        "lng": 103.86563566666666,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "66009",
+        "destination_code": "66009"
       },
       "subsequent": {
-        "time": "2017-07-18T01:43:18+00:00",
-        "duration_ms": 726555,
-        "lat": 1.3189929999999999,
-        "lng": 103.88656266666666,
-        "feature": "WAB"
+        "time": "2022-06-18T21:21:31+08:00",
+        "duration_ms": 503837,
+        "lat": 1.3497606666666666,
+        "lng": 103.8737135,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      },
+      "next2": {
+        "time": "2022-06-18T21:21:31+08:00",
+        "duration_ms": 503837,
+        "lat": 1.3497606666666666,
+        "lng": 103.8737135,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      },
+      "next3": {
+        "time": "2022-06-18T21:32:39+08:00",
+        "duration_ms": 1171837,
+        "lat": 1.3497606666666666,
+        "lng": 103.8737135,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "66009",
+        "destination_code": "66009"
+      }
+    },
+    {
+      "no": "73",
+      "operator": "SBST",
+      "next": {
+        "time": "2022-06-18T21:13:41+08:00",
+        "duration_ms": 33837,
+        "lat": 1.3632655,
+        "lng": 103.871455,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "54009",
+        "destination_code": "54009"
+      },
+      "subsequent": {
+        "time": "2022-06-18T21:20:45+08:00",
+        "duration_ms": 457837,
+        "lat": 1.3435921666666666,
+        "lng": 103.85476483333333,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "54009",
+        "destination_code": "54009"
+      },
+      "next2": {
+        "time": "2022-06-18T21:20:45+08:00",
+        "duration_ms": 457837,
+        "lat": 1.3435921666666666,
+        "lng": 103.85476483333333,
+        "load": "SEA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 2,
+        "origin_code": "54009",
+        "destination_code": "54009"
+      },
+      "next3": {
+        "time": "2022-06-18T21:26:49+08:00",
+        "duration_ms": 821837,
+        "lat": 1.3712010000000001,
+        "lng": 103.86542066666667,
+        "load": "SDA",
+        "feature": "WAB",
+        "type": "SD",
+        "visit_number": 1,
+        "origin_code": "54009",
+        "destination_code": "54009"
       }
     }
   ]
@@ -81,15 +276,34 @@ GET /?id=83139
 
 The responses are cached for **15 seconds**.
 
+Acronyms
+---
+
+- `operator`:
+  - `SBST` - SBS Transit
+  - `SMRT` - SMRT Corporation
+  - `TTS` - Tower Transit Singapore
+  - `GAS` - Go Ahead Singapore
+- `load`:
+  - `SEA` - Seats Available
+  - `SDA` - Standing Available
+  - `LSD` - Limited Standing
+- `feature`:
+  - `WAB` - Wheelchair Accessible Bus
+- `type`:
+  - `SD` - Single Deck
+  - `DD` - Double Deck
+  - `BD` - Bendy
+
 Development
 ---
 
 1. Add configuration. Follow documentation from [mytransport.sg DataMall](http://www.mytransport.sg/content/mytransport/home/dataMall.html). Two options (choose one):
   1. Copy and rename `.env.example` to `.env`. Edit the file.
   2. Add environment variables.
-2. `npm install`
-3. `npm start`
-4. Load `locahost:8081`. Change `PORT` in configuration if it doesn't work.
+2. Install [Vercel CLI](https://vercel.com/docs/cli).
+3. `npm install`
+4. `npm start`
 
 License
 ---

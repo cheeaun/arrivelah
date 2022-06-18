@@ -1,5 +1,5 @@
-*
-!server.js
-!service.js
+/*
+!api
+!vercel.json
 !package.json
 !package-lock.json
