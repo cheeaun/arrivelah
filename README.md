@@ -11,7 +11,7 @@ API
 ### Request
 
 ```
-GET /?id=83139
+GET /?id=66271
 ```
 
 - `id` - (required) Bus stop ID/code
