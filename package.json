@@ -14,9 +14,9 @@
   "license": "MIT",
   "dependencies": {
     "agentkeepalive": "~4.2.1",
-    "got": "~11.8.3",
+    "got": "~12.5.3",
     "http2-wrapper": "~2.1.11",
-    "vercel": "^25.1.0"
+    "vercel": "^28.15.3"
   },
   "scripts": {
     "start": "vercel dev"
