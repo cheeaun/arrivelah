@@ -59,7 +59,7 @@ export default async function handler(req, res) {
   console.log('🚌  ' + id);
 
   const apiURL =
-    'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=' +
+    'https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=' +
     id;
   const AccountKey = getAccountKey();
   console.log(`[${AccountKey.slice(0, 4)}] ↗️  ${apiURL}`);
@@ -102,6 +102,7 @@ export default async function handler(req, res) {
       visit_number: Number(bus.VisitNumber),
       origin_code: bus.OriginCode,
       destination_code: bus.DestinationCode,
+      monitored: bus.Monitored,
     };
   };
 
