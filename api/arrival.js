@@ -63,25 +63,51 @@ export default async function handler(req, res) {
     id;
   const AccountKey = getAccountKey();
   console.log(`[${AccountKey.slice(0, 4)}] ↗️  ${apiURL}`);
-  const { body, statusCode } = await got(apiURL, {
-    responseType: 'json',
-    timeout: 1000 * 10, // 10 seconds
-    retry: 3,
-    headers: {
-      AccountKey,
-      Connection: 'keep-alive',
-    },
-    agent: {
-      http: httpAgent,
-      https: httpsAgent,
-      http2: http2Agent,
-    },
-  });
 
-  if (statusCode !== 200 || !body) {
+  let body;
+  try {
+    const response = await got(apiURL, {
+      responseType: 'json',
+      timeout: 1000 * 10, // 10 seconds
+      retry: 3,
+      headers: {
+        AccountKey,
+        Connection: 'keep-alive',
+      },
+      agent: {
+        http: httpAgent,
+        https: httpsAgent,
+        http2: http2Agent,
+      },
+      throwHttpErrors: false, // Don't throw on non-2xx
+    });
+    body = response.body;
+    const statusCode = response.statusCode;
+
+    if (statusCode !== 200) {
+      const errorMessage = body?.message || body?.error || 'Failed to retrieve bus data.';
+      res.end(
+        JSON.stringify({
+          error: errorMessage,
+          statusCode,
+        }),
+      );
+      return;
+    }
+
+    if (!body) {
+      res.end(
+        JSON.stringify({
+          error: 'No bus arrival data received.',
+        }),
+      );
+      return;
+    }
+  } catch (error) {
+    console.error('Error fetching bus data:', error);
     res.end(
       JSON.stringify({
-        error: 'Invalid bus stop ID provided.',
+        error: 'Unable to retrieve bus arrival information. The service may be temporarily unavailable.',
       }),
     );
     return;
