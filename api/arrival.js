@@ -3,14 +3,23 @@ if (!process.env.accountKeys) {
 }
 
 import crypto from 'crypto';
-import got from 'got';
-import HttpAgent from 'agentkeepalive';
-import http2wrapper from 'http2-wrapper';
+import { Agent, request, interceptors } from 'undici';
 
-const { HttpsAgent } = HttpAgent;
-const httpAgent = new HttpAgent();
-const httpsAgent = new HttpsAgent();
-const http2Agent = new http2wrapper.Agent();
+const agent = new Agent()
+  .compose(interceptors.dns({ maxTTL: 3600000 }))
+  .compose(
+    interceptors.retry({
+      maxRetries: 3,
+      minTimeout: 500,
+      maxTimeout: 2000,
+      timeoutFactor: 2,
+      retry: (err, { state }) => {
+        if (err) return true;
+        if (state.statusCode && state.statusCode >= 500) return true;
+        return false;
+      },
+    }),
+  );
 
 const accountKeys = process.env.accountKeys.split(/\s+/);
 const getAccountKey = () => {
@@ -35,8 +44,7 @@ export default async function handler(req, res) {
     req.method.toLowerCase() === 'options' &&
     req.headers['access-control-request-headers']
   ) {
-    // Preflight
-    res.status = 204;
+    res.statusCode = 204;
     res.end();
     return;
   }
@@ -58,56 +66,38 @@ export default async function handler(req, res) {
 
   console.log('🚌  ' + id);
 
-  const apiURL =
-    'https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=' +
-    id;
+  const apiURL = `https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=${id}`;
   const AccountKey = getAccountKey();
   console.log(`[${AccountKey.slice(0, 4)}] ↗️  ${apiURL}`);
 
   let body;
   try {
-    const response = await got(apiURL, {
-      responseType: 'json',
-      timeout: 1000 * 10, // 10 seconds
-      retry: 3,
-      headers: {
-        AccountKey,
-        Connection: 'keep-alive',
-      },
-      agent: {
-        http: httpAgent,
-        https: httpsAgent,
-        http2: http2Agent,
-      },
-      throwHttpErrors: false, // Don't throw on non-2xx
+    const { statusCode, body: responseBody } = await request(apiURL, {
+      method: 'GET',
+      headers: { AccountKey },
+      dispatcher: agent,
+      headersTimeout: 10000,
+      bodyTimeout: 10000,
     });
-    body = response.body;
-    const statusCode = response.statusCode;
+    body = await responseBody.json();
 
     if (statusCode !== 200) {
-      const errorMessage = body?.message || body?.error || 'Failed to retrieve bus data.';
-      res.end(
-        JSON.stringify({
-          error: errorMessage,
-          statusCode,
-        }),
-      );
+      const errorMessage =
+        body?.message || body?.error || 'Failed to retrieve bus data.';
+      res.end(JSON.stringify({ error: errorMessage, statusCode }));
       return;
     }
 
     if (!body) {
-      res.end(
-        JSON.stringify({
-          error: 'No bus arrival data received.',
-        }),
-      );
+      res.end(JSON.stringify({ error: 'No bus arrival data received.' }));
       return;
     }
   } catch (error) {
     console.error('Error fetching bus data:', error);
     res.end(
       JSON.stringify({
-        error: 'Unable to retrieve bus arrival information. The service may be temporarily unavailable.',
+        error:
+          'Unable to retrieve bus arrival information. The service may be temporarily unavailable.',
       }),
     );
     return;
