@@ -64,9 +64,20 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (!/^\d{5}$/.test(id)) {
+    res.statusCode = 400;
+    res.end(
+      JSON.stringify({
+        error:
+          'Invalid bus stop ID provided. Bus stop code must be a 5-digit number. E.g.: `/?id=83139`.',
+      }),
+    );
+    return;
+  }
+
   console.log('🚌  ' + id);
 
-  const apiURL = `https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=${id}`;
+  const apiURL = `https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=${encodeURIComponent(id)}`;
   const AccountKey = getAccountKey();
   console.log(`[${AccountKey.slice(0, 4)}] ↗️  ${apiURL}`);
 
