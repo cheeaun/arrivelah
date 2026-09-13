@@ -13,11 +13,8 @@ const agent = new Agent()
       minTimeout: 500,
       maxTimeout: 2000,
       timeoutFactor: 2,
-      retry: (err, { state }) => {
-        if (err) return true;
-        if (state.statusCode && state.statusCode >= 500) return true;
-        return false;
-      },
+      // Default throwOnError=true rethrows 5xx instead of retrying them.
+      throwOnError: false,
     }),
   );
 
