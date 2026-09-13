@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/arrival.js": {
+      "maxDuration": 20
+    }
+  },
   "rewrites": [
     {
       "source": "/",
