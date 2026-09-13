@@ -6,7 +6,10 @@ import crypto from 'crypto';
 import { Agent, request, interceptors } from 'undici';
 
 const agent = new Agent()
-  .compose(interceptors.dns({ maxTTL: 3600000 }))
+  .compose(
+    // Vercel sin1 can't reach some IPv6 routes (EADDRNOTAVAIL); stick to IPv4.
+    interceptors.dns({ maxTTL: 3600000, dualStack: false, affinity: 4 }),
+  )
   .compose(
     interceptors.retry({
       maxRetries: 3,
