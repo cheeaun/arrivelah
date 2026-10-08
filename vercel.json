@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/arrival.js": {
-      "maxDuration": 20
+      "maxDuration": 10
     }
   },
   "rewrites": [
