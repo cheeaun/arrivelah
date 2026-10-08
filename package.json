@@ -3,7 +3,7 @@
   "version": "5.0.0",
   "description": "Bus arrival times in Singapore",
   "engines": {
-    "node": ">=20"
+    "node": "24.x"
   },
   "keywords": [
     "bus",
@@ -13,8 +13,7 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "undici": "^7.2.0",
-    "vercel": "^50.4.9"
+    "undici": "^7.2.0"
   },
   "scripts": {
     "start": "vercel dev"

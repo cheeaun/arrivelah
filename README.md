@@ -301,7 +301,7 @@ Development
 1. Add configuration. Follow documentation from [mytransport.sg DataMall](http://www.mytransport.sg/content/mytransport/home/dataMall.html). Two options (choose one):
     1. Copy and rename `.env.example` to `.env`. Edit the file.
     2. Add environment variables.
-2. Install [Vercel CLI](https://vercel.com/docs/cli).
+2. Install [Vercel CLI](https://vercel.com/docs/cli) globally: `npm i -g vercel`.
 3. `npm install`
 4. `npm start`
 
