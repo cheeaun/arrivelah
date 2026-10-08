@@ -27,6 +27,13 @@ const getAccountKey = () => {
   return accountKeys[accountKeyIndex];
 };
 
+// Round coordinates to max 6 decimal places (~0.1m precision, good enough
+// for bus locations and keeps payloads small). Preserves non-finite values.
+const round6 = (value) => {
+  const n = parseFloat(value, 10);
+  return Number.isFinite(n) ? Number(n.toFixed(6)) : n;
+};
+
 async function handler(req, res) {
   const url = new URL(req.url, 'http://fauxbase/');
 
@@ -97,8 +104,8 @@ async function handler(req, res) {
     return {
       time: arrival,
       duration_ms: arrival ? new Date(arrival) - now : null,
-      lat: parseFloat(bus.Latitude, 10),
-      lng: parseFloat(bus.Longitude, 10),
+      lat: round6(bus.Latitude),
+      lng: round6(bus.Longitude),
       load: bus.Load,
       feature: bus.Feature,
       type: bus.Type,
