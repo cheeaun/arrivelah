@@ -12,12 +12,16 @@ const agent = new Agent()
   )
   .compose(
     interceptors.retry({
-      maxRetries: 3,
+      maxRetries: 1,
+      // One fixed wait at minTimeout; timeoutFactor inert until maxRetries >= 2.
+      // maxTimeout also caps Retry-After (30s default would exceed maxDuration).
       minTimeout: 500,
       maxTimeout: 2000,
       timeoutFactor: 2,
       // Default throwOnError=true rethrows 5xx instead of retrying them.
       throwOnError: false,
+      // Default list includes 429; don't retry rate limits.
+      statusCodes: [500, 502, 503, 504],
     }),
   );
 
@@ -35,16 +39,20 @@ const getAccountKey = () => {
 export default async function handler(req, res) {
   const url = new URL(req.url, 'http://fauxbase/');
 
-  res.setHeader('vary', 'origin');
   res.setHeader('access-control-allow-origin', '*');
   res.setHeader('access-control-allow-headers', '*');
   res.setHeader('access-control-allow-credentials', 'true');
+
+  // Default for error responses; branches below override.
+  res.setHeader('cache-control', 's-maxage=5, max-age=5');
 
   if (
     req.method.toLowerCase() === 'options' &&
     req.headers['access-control-request-headers']
   ) {
     res.statusCode = 204;
+    res.setHeader('cache-control', 's-maxage=86400, max-age=86400');
+    res.setHeader('access-control-max-age', '86400');
     res.end();
     return;
   }
@@ -53,6 +61,7 @@ export default async function handler(req, res) {
 
   const id = url.searchParams.get('id')?.trim();
   if (!id) {
+    res.setHeader('cache-control', 's-maxage=300, max-age=300');
     res.end(
       JSON.stringify({
         name: 'arrivelah',
