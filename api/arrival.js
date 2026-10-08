@@ -39,13 +39,29 @@ const getAccountKey = () => {
 // Round coordinates to max 6 decimal places (~0.1m precision, good enough
 // for bus locations and keeps payloads small). Preserves non-finite values.
 const round6 = (value) => {
-  const n = parseFloat(value, 10);
-  return Number.isFinite(n) ? Number(n.toFixed(6)) : n;
+  const n = typeof value === 'number' ? value : parseFloat(value);
+  return Number.isFinite(n) ? Math.round(n * 1e6) / 1e6 : n;
+};
+
+const arrivalResponse = (bus, now) => {
+  const arrival = bus.EstimatedArrival;
+  if (!arrival) return null;
+  return {
+    time: arrival,
+    duration_ms: Date.parse(arrival) - now,
+    lat: round6(bus.Latitude),
+    lng: round6(bus.Longitude),
+    load: bus.Load,
+    feature: bus.Feature,
+    type: bus.Type,
+    visit_number: +bus.VisitNumber,
+    origin_code: bus.OriginCode,
+    destination_code: bus.DestinationCode,
+    monitored: bus.Monitored,
+  };
 };
 
 export default async function handler(req, res) {
-  const url = new URL(req.url, 'http://fauxbase/');
-
   res.setHeader('access-control-allow-origin', '*');
   res.setHeader('access-control-allow-headers', '*');
   res.setHeader('access-control-allow-credentials', 'true');
@@ -54,7 +70,7 @@ export default async function handler(req, res) {
   res.setHeader('cache-control', 's-maxage=5, max-age=5');
 
   if (
-    req.method.toLowerCase() === 'options' &&
+    req.method === 'OPTIONS' &&
     req.headers['access-control-request-headers']
   ) {
     res.statusCode = 204;
@@ -66,7 +82,13 @@ export default async function handler(req, res) {
 
   res.setHeader('content-type', 'application/json');
 
-  const id = url.searchParams.get('id')?.trim();
+  let id = req.query?.id;
+  if (Array.isArray(id)) id = id[0];
+  if (typeof id !== 'string') {
+    // Fallback when req.query missing
+    id = new URL(req.url, 'http://fauxbase/').searchParams.get('id');
+  }
+  id = id?.trim();
   if (!id) {
     res.setHeader('cache-control', 's-maxage=300, max-age=300');
     res.end(
@@ -77,6 +99,10 @@ export default async function handler(req, res) {
           'Bus stop code (`id` URL parameter) is required. E.g.: `/?id=83139`. List of bus stops: https://observablehq.com/@cheeaun/list-of-bus-stops-in-singapore',
       }),
     );
+    return;
+  }
+  if (!/^\d{5}$/.test(id)) {
+    res.end(JSON.stringify({ error: 'Invalid bus stop code.', statusCode: 400 }));
     return;
   }
 
@@ -92,8 +118,8 @@ export default async function handler(req, res) {
       method: 'GET',
       headers: { AccountKey },
       dispatcher: agent,
-      headersTimeout: 10000,
-      bodyTimeout: 10000,
+      headersTimeout: 4000,
+      bodyTimeout: 4000,
     });
     body = await responseBody.json();
 
@@ -120,34 +146,18 @@ export default async function handler(req, res) {
   }
 
   const now = Date.now();
-  const arrivalResponse = (bus) => {
-    const arrival = bus.EstimatedArrival;
-    if (!arrival) return null;
-    return {
-      time: arrival,
-      duration_ms: arrival ? new Date(arrival) - now : null,
-      lat: round6(bus.Latitude),
-      lng: round6(bus.Longitude),
-      load: bus.Load,
-      feature: bus.Feature,
-      type: bus.Type,
-      visit_number: Number(bus.VisitNumber),
-      origin_code: bus.OriginCode,
-      destination_code: bus.DestinationCode,
-      monitored: bus.Monitored,
-    };
-  };
 
   const services = body.Services.map((service) => {
     const { NextBus, NextBus2, NextBus3 } = service;
 
+    const next2 = arrivalResponse(NextBus2, now);
     return {
       no: service.ServiceNo,
       operator: service.Operator,
-      next: arrivalResponse(NextBus),
-      subsequent: arrivalResponse(NextBus2), // Legacy pre
-      next2: arrivalResponse(NextBus2),
-      next3: arrivalResponse(NextBus3),
+      next: arrivalResponse(NextBus, now),
+      subsequent: next2, // Legacy alias
+      next2,
+      next3: arrivalResponse(NextBus3, now),
     };
   });
 
