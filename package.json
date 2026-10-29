@@ -13,7 +13,7 @@
   "author": "Lim Chee Aun <cheeaun@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "undici": "^7.2.0"
+    "undici": "^7.30.1"
   },
   "scripts": {
     "start": "vercel dev"
